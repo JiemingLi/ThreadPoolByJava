@@ -116,10 +116,14 @@ public class BaseThreadPool extends Thread implements ThreadPool {
 //          这里同步代码块，保证了每次访问的时候都是最新的数据！
             synchronized (this){
                 if(isShutdown) break;
-//                任务队列不为空，并且当前可以工作的线程小于coreCount，那么说明工作线程数不够，就先增加到maxSize
-//                比如说coreSize 为20，initSize为10，maxSize 为30,
-//                突然一下子来了20分线程进来，但是工作线程只有15个，由于某种原因可能那15个工作现场还没执行完，那么此时的任务队列肯定还有剩余的，发现此时线程还没到coreSize
-//                那么就直接开maxSize个线程先把
+                //任务队列不为空，并且当前可以工作的线程小于coreCount，那么说明工作
+                // 线程数不够，就先增加到maxSize.
+                //比如说coreSize 为20，initSize为10，maxSize 为30,
+                //突然一下子来了20分线程进来，但是工作线程只有15个，由于某种原因可能
+                //那15个工作现场还没执行完，那么此时的任务队列肯定还有剩余的，发现此
+                //时线程还没到coreSize
+                //那么就直接开maxSize个线程先把
+                //如果发现现在工作的的线程已经过了coreSize就先不增加线程数啦
                 if(runnableQueue.size() > 0 && activityCount < coreSize){
                     for (int i = runnableQueue.size(); i < maxSize; i++) {
                         newThread();
